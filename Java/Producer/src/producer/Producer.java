@@ -1,4 +1,4 @@
-package Producer;
+package producer;
 
 import java.io.BufferedReader;
 import java.io.FileWriter;
