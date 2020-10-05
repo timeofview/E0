@@ -117,7 +117,10 @@ int getMode(int numArgs, char *args[]){ // SegFault
 void controlloargs(int numArgs, char *args[], int mode){
     
     int i;
-    
+    if(mode<2){
+    	printf("Caro utente, hai dimenticato a passare i file.")
+    	exit(EXIT_FAILURE);
+    }
     // Controllo che i file esistano e che siano di testo
     for(i=1; i<numArgs; i++){
 
@@ -125,32 +128,8 @@ void controlloargs(int numArgs, char *args[], int mode){
             fprintf(stderr, "Errore: %s è un file binario!\n", args[i]);
             exit(EXIT_FAILURE);
         }
-        // Proseguo
+
     }
-    
-    // Se sono nella modalità con il "-s"
-    if(mode){
-        
-        // Il minimo numero di args è 3: file1, -s, stringa
-        if(numArgs-1 < 3){
-            fprintf(stderr, "Errore: se viene dato il parametro 'stringaDaCercare', il numero minimo degli argomenti è 3!\n");
-            printUsage(args[0]);
-            
-            exit(EXIT_FAILURE);
-        }
-        
-    }
-    
-    // Se non sono nella modalità con il "-s"
-    if(numArgs-1 < 1){
-            fprintf(stderr, "Errore: senza il parametro 'stringaDaCercare', il numero minimo degli argomenti è 1!\n");
-            printUsage(args[0]);
-            
-            exit(EXIT_FAILURE);
-        }
-        
-    
-    return;
     
 }
 
