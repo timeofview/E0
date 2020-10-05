@@ -20,10 +20,10 @@
 
 
 int getMode(int numArgs, char *args[]);
-void controlloargs(int numArgs, char *args[], int mode);
+void controlloArgs(int numArgs, char *args[], int mode);
 int isText(char *filename);
 void printUsage(char *programName);
-void printfFileContent(int numArgs, char *args[]);
+void printFileContent(int numArgs, char *args[]);
 void searchStringInFiles(int numArgs, char *args[]);
 
 
@@ -60,11 +60,11 @@ int main(int argc, char *argv[]) {
     printf("Mode = %d\n0: senza -s\n1: con -s\n", mode);
     
     // Controllo gli args ion base a "mode"
-    controlloargs(argc, argv, mode);
+    controlloArgs(argc, argv, mode);
     
     // Se non è stato passato il "-s"
     if(!mode)
-        printfFileContent(argc, argv); // Stampo il contenuto dei file
+        printFileContent(argc, argv); // Stampo il contenuto dei file
     
     
     // Cerco la stringa nei file
@@ -81,7 +81,7 @@ int getMode(int numArgs, char *args[]){ // SegFault
     int i;
     
     // Capisco in quale delle due modalità sono
-    //E se l'utente non ti passa il path del file?
+    // E se l'utente non ti passa il path del file?
     for(i=0; i<numArgs; i++){
         
         // Se ho trovato il "-s" e quest'ultimo si trova in posizione 2 o più
@@ -94,8 +94,8 @@ int getMode(int numArgs, char *args[]){ // SegFault
             if(++i<numArgs){
                 
                  // Modalità 1
-                return i;//resituisco l'indice della stringa da cercare nell'array di argomenti
-                //inventati un modo per stampare il resto degli argomenti che verrano ignorati
+                return i; // Resituisco l'indice della stringa da cercare nell'array di argomenti
+                // Inventati un modo per stampare il resto degli argomenti che verrano ignorati ???? Mi spiegherai poi :D
                 
             }/*else{
                 
@@ -114,18 +114,22 @@ int getMode(int numArgs, char *args[]){ // SegFault
 }
 
 
-void controlloargs(int numArgs, char *args[], int mode){
+void controlloArgs(int numArgs, char *args[], int mode){
     
     int i;
-    if(mode<2){
-    	printf("Caro utente, hai dimenticato a passare i file.")
+	
+    if(mode < 2){
+    	fprintf(stderr, "Non hai passato nessun file come argomento!\n");
+		
     	exit(EXIT_FAILURE);
     }
+	
     // Controllo che i file esistano e che siano di testo
     for(i=1; i<numArgs; i++){
 
         if(!isText(args[i])){
             fprintf(stderr, "Errore: %s è un file binario!\n", args[i]);
+			
             exit(EXIT_FAILURE);
         }
 
@@ -149,13 +153,13 @@ int isText(char *filename) {
     
     while ((c = fgetc(c) != EOF)) {
         if ((!isascii(c) || iscntrl(c)) && !isspace(c)) {
-            printf("%s è un file binario!\n", filename);
+            fprintf(stderr, "%s è un file binario!\n", filename);
             fclose(fp);
             
             return 0;
         }
     }
-    printf("%s è un file di testo!\n", filename);
+    fprintf(stderr, "%s è un file di testo!\n", filename);
     fclose(fp);
     
     return 1;
@@ -173,7 +177,7 @@ void printUsage(char *programName){
     return;
 }
 
-void printfFileContent(int numArgs, char *args[]){
+void printFileContent(int numArgs, char *args[]){
     
     int i, c;
     FILE *fp;
@@ -220,13 +224,14 @@ void searchStringInFiles(int numArgs, char *args[]){
         while(fscanf(fp, "%s", buffer) == 1) {
             
             if(!strcmp(buffer, toFind))
-                cnt++;
+				cnt++;
             
         }
         
         printf("\n ++ Nel file %s la stringa %s è stata trovata %d volte! ++\n", args[i], toFind, cnt);
         
-        cnt = 0; // Azzero il contatore per il prossimo file
+		// Azzero il contatore per il prossimo file
+        cnt = 0;
         fclose(fp);
     }
     
