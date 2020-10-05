@@ -118,6 +118,15 @@ void controlloargs(int numArgs, char *args[], int mode){
     
     int i;
     
+    // Controllo che i file esistano e che siano di testo
+    for(i=1; i<numArgs; i++){
+
+        if(!isText(args[i])){
+            fprintf(stderr, "Errore: %s è un file binario!\n", args[i]);
+            exit(EXIT_FAILURE);
+        }
+        // Proseguo
+    }
     
     // Se sono nella modalità con il "-s"
     if(mode){
@@ -130,16 +139,6 @@ void controlloargs(int numArgs, char *args[], int mode){
             exit(EXIT_FAILURE);
         }
         
-        // Controllo che i file esistano e che siano di testo
-        for(i=1; i<numArgs; i++){
-            
-            if(!isText(args[i])){
-                fprintf(stderr, "Errore: %s è un file binario!\n", args[i]);
-                exit(EXIT_FAILURE);
-            }
-            // Proseguo
-        }
-        
     }
     
     // Se non sono nella modalità con il "-s"
@@ -150,15 +149,6 @@ void controlloargs(int numArgs, char *args[], int mode){
             exit(EXIT_FAILURE);
         }
         
-        // Controllo che i file esistano e che siano di testo
-        for(i=1; i<numArgs; i++){
-            
-            if(!isText(args[i])){
-                fprintf(stderr, "Errore: %s è un file binario!\n", args[i]);
-                exit(EXIT_FAILURE);
-            }
-            // Proseguo
-        }
     
     return;
     
