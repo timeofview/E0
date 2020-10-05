@@ -81,7 +81,8 @@ int getMode(int numArgs, char *args[]){ // SegFault
     int i;
     
     // Capisco in quale delle due modalità sono
-    for(i=1; i<numArgs; i++){
+    //E se l'utente non ti passa il path del file?
+    for(i=0; i<numArgs; i++){
         
         // Se ho trovato il "-s" e quest'ultimo si trova in posizione 2 o più
         // Ho messo posizione 2 o più perché nel caso con minor numero di argomenti
@@ -90,18 +91,19 @@ int getMode(int numArgs, char *args[]){ // SegFault
         // (Ovvero posizione 2)
         if(!strcmp(args[i], "-s")){
             
-            if(i >= 2){
+            if(++i<numArgs){
                 
                  // Modalità 1
-                return 1;
+                return i;//resituisco l'indice della stringa da cercare nell'array di argomenti
+                //inventati un modo per stampare il resto degli argomenti che verrano ignorati
                 
-            }else{
+            }/*else{
                 
                 fprintf(stderr, "Errore nell'inserimento del parametro -s!\n");
                 printUsage(args[0]); // Stampo come dovrebbe essere utilizzato il programma 
                 
                 exit(EXIT_FAILURE);
-            }
+            }*/
         }
         
     }
