@@ -151,7 +151,7 @@ int isText(char *filename) {
         exit(EXIT_FAILURE);
     }
     
-    while ((c = fgetc(c) != EOF)) {
+    while ((c = fgetc(fp) != EOF)) {
         if ((!isascii(c) || iscntrl(c)) && !isspace(c)) {
             fprintf(stderr, "%s è un file binario!\n", filename);
             fclose(fp);
