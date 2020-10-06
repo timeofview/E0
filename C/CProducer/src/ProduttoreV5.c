@@ -30,20 +30,22 @@ int main(int argc, char* argv[]) {
     do{
         printf("Inserisci la nuova riga, (EOF o riga vuota per terminare) : \n");
         gets(buffer);  // N  : riga
-        if(strcmp(buffer, "EOF")!=0 || strcmp(buffer, "")!=0){
+        
+        if(strcmp(buffer, "EOF")!=0){
             token=strtok(buffer, DELIM);
             n=atoi(token);
-            printf("%d----%d\n", n, NumFiles );
+
+
+
             if(n > 0 && n <= NumFiles){
                 if(fd[n-1]==-1){ // se il file non è stato mai aperto
-                    fd[n-1]= open(argv[n], O_WRONLY | O_CREAT, 0777);
+                    fd[n-1]= open(argv[n], O_CREAT | O_WRONLY | O_APPEND, 0777);
                     if(fd[n-1]<0){
                         perror("IMPOSSIBILE APRIRE FILE-----terminazione del programma\n");
                         exit(EXIT_FAILURE);
                     }
                 }
                 token = strtok(NULL, "\0");
-                printf("%s\n", token);
                 token[strlen(token)+1] = "\0";
                 token[strlen(token)] = "\n";
                 trascritto = write(fd[n-1], token, strlen(token));
