@@ -18,12 +18,12 @@ int main(int argc, char* argv[]) {
     char *token;
     //Controllo Parametri
     if (argc < 2 || argc>MAX_FILES+1){
-        perror("SINTASSI ERRATA---> USO: NomeProgramma FileDoveScrivere \n oppure numero di file inserito troppo elevato (Max %d)", MAX_FILES);
+        printf("SINTASSI ERRATA---> USO: NomeProgramma FileDoveScrivere \n oppure numero di file inserito troppo elevato (Max %d)", MAX_FILES);
         exit(EXIT_FAILURE);
     }
 
     NumFiles=argc-1;
-    for(n=0; n<=NumFiles ; n++){
+    for(n=0; n<NumFiles ; n++){
         fd[n]=-1;   // setto i file descriptor a -1 per controllare successivamente se sono stati aperti
     }
 
@@ -33,6 +33,7 @@ int main(int argc, char* argv[]) {
         
         
         token=strtok(buffer, DELIM);
+        if(token!=NULL){
         n=atoi(token);
         if(n > 0 && n <= NumFiles){
             if(fd[n-1]==-1){ // se il file non è stato mai aperto
@@ -53,10 +54,9 @@ int main(int argc, char* argv[]) {
 
         }else{
             printf("numero inserito non corretto oppure il carattere precedente i due punti non rappresenta un numero\n");
-        }
+        }}
 
         printf("Inserisci la nuova riga, (EOF per terminare) : \n");
-        gets(buffer);  // N  : riga
     }
     
 
