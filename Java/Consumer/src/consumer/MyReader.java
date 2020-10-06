@@ -13,7 +13,6 @@ class MyReader extends Thread {
 	}
 
 	public void run() {
-
 		try {
 			int in;
 			char ch;
@@ -29,5 +28,4 @@ class MyReader extends Thread {
 			System.exit(2);
 		}
 	}
-
 }

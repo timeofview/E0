@@ -12,6 +12,7 @@ public class Consumer {
 			ignore = args[0].charAt(0);
 		} catch (IndexOutOfBoundsException e) {
 			System.out.println("Sintassi non corretta.");
+			System.exit(1);
 		}
 		for (int i = 1; i < length; i++) {
 			try {
@@ -21,5 +22,4 @@ public class Consumer {
 			}
 		}
 	}
-
 }
