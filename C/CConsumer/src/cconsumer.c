@@ -1,12 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <fcntl.h>
 #include <string.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <signal.h>
-#include <ctype.h> // Per isascii, isspace, ...
-#include <sys/wait.h>
+
 
 
 // Costanti 
