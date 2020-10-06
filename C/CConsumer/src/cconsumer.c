@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
     // Capisco in quale delle due modalità di funzionamento sono
     mode = getMode(argc, argv);
     
-    printf("Mode = %d\n0: senza -s\n1: con -s\n", mode);
+    //printf("Mode = %d\n0: senza -s\n1: con -s\n", mode);
     
     // Controllo gli args ion base a "mode"
     controlloArgs(argc, argv, mode);
@@ -173,7 +173,7 @@ void printFileContent(int numArgs, char *args[]){
         fp = fopen(args[i], "r");
         
         if(i < numArgs)
-            printf("\n ++ Contenuto file %s ++ \n", args[i]);
+            printf("\n ++ Contenuto file '%s' ++ \n", args[i]);
 
         while ((c = getc(fp)) != EOF)
             putchar(c);
@@ -214,7 +214,7 @@ void searchStringInFiles(int numArgs, char *args[]){
             
         }
         
-        printf("\n ++ Nel file %s la stringa '%s' è stata trovata %d volte! ++\n", args[i], toFind, cnt);
+        printf("\n ++ Nel file '%s' la stringa '%s' è stata trovata %d volte! ++\n", args[i], toFind, cnt);
         
         cnt = 0; // Azzero il contatore per il prossimo file
         fclose(fp);
