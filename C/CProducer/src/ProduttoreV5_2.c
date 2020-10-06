@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
     char *token;
     //Controllo Parametri
     if (argc < 2 || argc>MAX_FILES+1){
-        perror("SINTASSI ERRATA---> USO: NomeProgramma FileDoveScrivere \n oppure numero di file inserito troppo elevato (Max 9)");
+        perror("SINTASSI ERRATA---> USO: NomeProgramma FileDoveScrivere \n oppure numero di file inserito troppo elevato (Max %d)", MAX_FILES);
         exit(EXIT_FAILURE);
     }
 
