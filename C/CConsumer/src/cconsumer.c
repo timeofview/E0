@@ -111,7 +111,7 @@ void controlloArgs(int numArgs, char *args[], int mode){
     FILE *fp;
     
     
-    // Apro tutti i file per verificare se sono accessibili
+    // Apro i file e controllo che siano accessibili
     for(i=1; i<numArgs && strcmp(args[i], "-s")!=0 ; i++){
         
         fp = fopen(args[i], "r");
@@ -203,6 +203,7 @@ void searchStringInFiles(int numArgs, char *args[]){
         
     }
     
+    // Controllo per ogni file se la stringa è presente oppure no
     for(i=1; i<numArgs && strcmp(args[i], "-s")!=0 ; i++){
 
         fp = fopen(args[i], "r");
