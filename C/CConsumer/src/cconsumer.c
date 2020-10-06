@@ -21,7 +21,6 @@
 
 int getMode(int numArgs, char *args[]);
 void controlloArgs(int numArgs, char *args[], int mode);
-int isText(char *filename);
 void printUsage(char *programName);
 void printFileContent(int numArgs, char *args[]);
 void searchStringInFiles(int numArgs, char *args[]);
@@ -55,34 +54,32 @@ int main(int argc, char *argv[]) {
     int mode;
     
     // Capisco in quale delle due modalità di funzionamento sono
-    mode = getMode(argc, argv); // SegFault
+    mode = getMode(argc, argv);
     
     printf("Mode = %d\n0: senza -s\n1: con -s\n", mode);
     
     // Controllo gli args ion base a "mode"
     controlloArgs(argc, argv, mode);
     
-    // Se non è stato passato il "-s"
-    if(!mode)
+    // Se è stato passato il "-s"
+    if(mode)
+        searchStringInFiles(argc, argv);  // Cerco la stringa nei file
+    else
         printFileContent(argc, argv); // Stampo il contenuto dei file
     
     
-    // Cerco la stringa nei file
-    searchStringInFiles(argc, argv);
-    
-    printf("Programma terminato\n");
-    
+    printf("\nProgramma terminato!\n");
     
     return 0;
+    
 }
 
-int getMode(int numArgs, char *args[]){ // SegFault
+int getMode(int numArgs, char *args[]){
     
     int i;
     
     // Capisco in quale delle due modalità sono
-    // E se l'utente non ti passa il path del file?
-    for(i=0; i<numArgs; i++){
+    for(i=1; i<numArgs; i++){
         
         // Se ho trovato il "-s" e quest'ultimo si trova in posizione 2 o più
         // Ho messo posizione 2 o più perché nel caso con minor numero di argomenti
@@ -91,19 +88,18 @@ int getMode(int numArgs, char *args[]){ // SegFault
         // (Ovvero posizione 2)
         if(!strcmp(args[i], "-s")){
             
-            if(++i<numArgs){
+            if(i >= 2){
                 
                  // Modalità 1
-                return i; // Resituisco l'indice della stringa da cercare nell'array di argomenti
-                // Inventati un modo per stampare il resto degli argomenti che verrano ignorati ???? Mi spiegherai poi :D
+                return 1;
                 
-            }/*else{
+            }else{
                 
                 fprintf(stderr, "Errore nell'inserimento del parametro -s!\n");
                 printUsage(args[0]); // Stampo come dovrebbe essere utilizzato il programma 
                 
-                exit(EXIT_FAILURE);
-            }*/
+                exit(1);
+            }
         }
         
     }
@@ -117,55 +113,50 @@ int getMode(int numArgs, char *args[]){ // SegFault
 void controlloArgs(int numArgs, char *args[], int mode){
     
     int i;
-	
-    if(mode < 2){
-    	fprintf(stderr, "Non hai passato nessun file come argomento!\n");
-		
-    	exit(EXIT_FAILURE);
-    }
-	
-    // Controllo che i file esistano e che siano di testo
-    for(i=1; i<numArgs; i++){
-
-        if(!isText(args[i])){
-            fprintf(stderr, "Errore: %s è un file binario!\n", args[i]);
-			
-            exit(EXIT_FAILURE);
-        }
-
-    }
-    
-}
-
-
-int isText(char *filename) {
-    
-    int c;
     FILE *fp;
     
-    fp = fopen(filename, "r");
     
-    if (!fp) {
-        fprintf(stderr, "Errore apertura file %s!\n", filename);
+    // Apro tutti i file per verificare se sono accessibili
+    for(i=1; i<numArgs && strcmp(args[i], "-s")!=0 ; i++){
         
-        exit(EXIT_FAILURE);
-    }
-    
-    while ((c = fgetc(fp) != EOF)) {
-        if ((!isascii(c) || iscntrl(c)) && !isspace(c)) {
-            fprintf(stderr, "%s è un file binario!\n", filename);
-            fclose(fp);
+        fp = fopen(args[i], "r");
+        
+        if(!fp){
+            fprintf(stderr, "Errore: non è stato possibile aprire il file '%s'!\n", args[i]); 
             
-            return 0;
+            exit(1);
         }
+        
+        fclose(fp);
     }
-    fprintf(stderr, "%s è un file di testo!\n", filename);
-    fclose(fp);
     
-    return 1;
     
+    // Se sono nella modalità con il "-s"
+    if(mode){
+        
+        // Il minimo numero di args è 3: file1, -s, stringa
+        if(numArgs-1 < 3){
+            fprintf(stderr, "Errore: se viene dato il parametro 'stringaDaCercare', il numero minimo degli argomenti è 3!\n");
+            printUsage(args[0]);
+            
+            exit(1);
+        }
+        
+    }
+    
+    // Se non sono nella modalità con il "-s"
+    if(numArgs-1 < 1){
+        fprintf(stderr, "Errore: senza il parametro 'stringaDaCercare', il numero minimo degli argomenti è 1!\n");
+        printUsage(args[0]);
+        
+        exit(1);
+    }
+        
+    
+    return;
     
 }
+
 
 void printUsage(char *programName){
     
@@ -224,18 +215,16 @@ void searchStringInFiles(int numArgs, char *args[]){
         while(fscanf(fp, "%s", buffer) == 1) {
             
             if(!strcmp(buffer, toFind))
-				cnt++;
+                cnt++;
             
         }
         
-        printf("\n ++ Nel file %s la stringa %s è stata trovata %d volte! ++\n", args[i], toFind, cnt);
+        printf("\n ++ Nel file %s la stringa '%s' è stata trovata %d volte! ++\n", args[i], toFind, cnt);
         
-		// Azzero il contatore per il prossimo file
-        cnt = 0;
+        cnt = 0; // Azzero il contatore per il prossimo file
         fclose(fp);
     }
     
     return;
     
 }
-
