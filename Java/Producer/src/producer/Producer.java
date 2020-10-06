@@ -18,8 +18,8 @@ public class Producer {
 		int tmpValue;
 		FileWriter[] fout= new FileWriter[args.length];
 
-        //Check per 0 argomenti passati
-        if (args.length == 0 || args.length > maxFileNumber){
+        	//Check per 0 argomenti passati
+        	if (args.length == 0 || args.length > maxFileNumber){
 			System.out.println("Utilizzo: produttore <inputFilename1> ... <inputFilename9>");
 			System.exit(0);
 		}
