@@ -1,10 +1,17 @@
+// Librerie
 #include <stdio.h>
 #include <stdlib.h>
+#include <fcntl.h>
 #include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <signal.h>
+#include <sys/wait.h>
 
 
 // Prototipi di funzioni
 
+void waitChild();
 void printUsage(char*);
 
 
@@ -14,7 +21,8 @@ void printUsage(char*);
 // su terminale
 int main(int argc, char *argv[]) {
     
-    int i;
+    int numFigli, i;
+    int *pid;
     char c;
     FILE *fp;
     
@@ -23,7 +31,7 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "\nErrore: devi passare almeno 2 argomenti!\n");
         printUsage(argv[0]);
         
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     
     // Verifico che l'argomento in posizione 2 sia il carattere da filtrare 
@@ -31,43 +39,101 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "\nErrore: il primo argomento deve essere 'carattereDaCercare'!\n");
         printUsage(argv[0]);
         
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     
-    // Parto dall'argomento 2 perché da lì partono i vari file...
-    for(i=2; i<argc; i++){
-            
-        // Apro tutti i file e verifico che esistano
-        fp = fopen(argv[i], "r");
+    // Ottengo il numero dei figli in base al numero dei file passati come argomento
+    numFigli = argc - 2;
+    
+    // Alloco dinamicamente in base al numero dei figli
+    pid = (int *)malloc(numFigli * sizeof(int));
+    
+    
+    for(i=0; i<numFigli; i++){
         
-        // Controllo che il file esista
-        if(!fp){
-            fprintf(stderr, "\nErrore: il file '%s' non esiste!\n", argv[i]);
-            
-            exit(1);
-        }
+        // Eseguo la fork
+        pid[i] = fork();
         
-        printf("\n++ File '%s' senza il carattere '%c' ++\n", argv[i], argv[1][0]);
-        
-        // Leggo tutto il file carattere per carattere 
-        while ((c = getc(fp)) != EOF){
-            
-            // Se il carattere è uguale a quello passato come argomento 
-            if(c != argv[1][0]){
+        // Figli
+        if(pid[i] == 0){
                 
-                // Stampo a video il carattere
-                putchar(c); 
+            // Apro i file e verifico che esistano
+            fp = fopen(argv[i+2], "r");
+            
+            // Controllo che il file esista
+            if(!fp){
+                fprintf(stderr, "\n++ Figlio %d - Errore: il file '%s' non esiste!\n", i, argv[i+2]);
+                
+                exit(EXIT_FAILURE);
             }
-        }
+            
+            printf("\n++ Figlio P%d - File '%s' senza il carattere '%c' ++\n", i+1, argv[i+2], argv[1][0]);
+            
+            // Leggo tutto il file carattere per carattere 
+            while ((c = getc(fp)) != EOF){
+                
+                // Se il carattere è uguale a quello passato come argomento 
+                if(c != argv[1][0]){
+                    
+                    // Stampo a video il carattere
+                    putchar(c); 
+                }
+            }
+            
+            fclose(fp);
+            
+            // Terminazione volontaria del figlio
+            exit(EXIT_SUCCESS);
         
-        fclose(fp);
-
+            
+        }else if(pid[i] < 0){
+            fprintf(stderr, "P0: Errore nella creazione del figlio P%d!", i+1);
+            
+            exit(EXIT_FAILURE);
+        }
     }
     
+    // Padre 
     
-    printf("\nProgramma terminato!\n");
+    // P0 attende la terminazione dei figli
+    for(i=0; i<numFigli; i++){
+        waitChild();
+    }
+    
     
     return 0;
+    
+}
+
+
+
+
+void waitChild() {
+    
+    int pid_terminated, status;
+    pid_terminated = wait(&status);
+    
+    if (pid_terminated < 0)    {
+        fprintf(stderr, "P0: errore in wait\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if(WIFEXITED(status)){
+        
+        printf("P0: terminazione volontaria del figlio %d con stato %d\n", pid_terminated, WEXITSTATUS(status));
+        
+        if (WEXITSTATUS(status) == EXIT_FAILURE){
+            
+            fprintf(stderr, "P0: errore nella terminazione del figlio %d\n", pid_terminated);
+            exit(EXIT_FAILURE);
+        }
+
+    }else if (WIFSIGNALED(status)){
+        
+        fprintf(stderr, "P0: terminazione involontaria del figlio %d a causa del segnale %d\n", pid_terminated, WTERMSIG(status));
+        exit(EXIT_FAILURE);
+        
+    }
     
 }
 
