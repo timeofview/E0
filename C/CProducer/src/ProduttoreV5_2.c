@@ -8,11 +8,8 @@
 #define MAX_FILES 9
 
 
-//produttore File1 File2 FileN
-//NumFile         1     2    N
-//argv         argv[1]
-//fd              0     1     N-1
-//Formattazione Input> nLinea: messaggio
+
+//Formattazione Input> nFile: messaggio
 
 int main(int argc, char* argv[]) {
     int n,trascritto, NumFiles;
