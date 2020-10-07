@@ -40,48 +40,48 @@ int main(int argc, char* argv[]) {
     //Ciclo di Input con terminatore EOF
     while( gets(buffer)!=NULL ){        
 
-	//Cut stringa
+    	//Cut stringa
         token=strtok(buffer, DELIM);
 
-	//Check di Esistenza dell'indice
+	    //Check di Esistenza dell'indice
         if(token!=NULL){
 	    
-	    //Conversione indice in Intero
+	        //Conversione indice in Intero
             n=atoi(token);
 
-	    //Check di validità dell'indice
+	        //Check di validità dell'indice
             if(n > 0 && n <= NumFiles){
 
-		//Se il file non è stato mai aperto
-                if(fd[n-1]==-1){
-                    fd[n-1]= open(argv[n], O_CREAT | O_WRONLY | O_APPEND, 0777);
-                    if(fd[n-1]<0){
-                        perror("IMPOSSIBILE APRIRE FILE-----terminazione del programma\n");
-                        exit(EXIT_FAILURE);
+                //Se il file non è stato mai aperto
+                    if(fd[n-1]==-1){
+                        fd[n-1]= open(argv[n], O_CREAT | O_WRONLY | O_APPEND, 0777);
+                        if(fd[n-1]<0){
+                            perror("IMPOSSIBILE APRIRE FILE-----terminazione del programma\n");
+                            exit(EXIT_FAILURE);
+                    }
+                }
+
+                //Seleziono secondo token
+                token = strtok(NULL, "\0");
+        
+                //Aggiungo terminatore stringa
+                token[strlen(token)+1] = '\0';
+
+                //Aggiungo terminatore linea
+                token[strlen(token)] = '\n';
+
+                //Scrittura
+                trascritto = write(fd[n-1], token, strlen(token));
+
+                //Check esito scrittura
+                if(trascritto<0){
+                    printf("Scrittura nel file %s non riuscita\n", argv[n]);
                 }
             }
-
-	    //Seleziono secondo token
-            token = strtok(NULL, "\0");
-	   
-	    //Aggiungo terminatore stringa
-            token[strlen(token)+1] = '\0';
-
-	    //Aggiungo terminatore linea
-            token[strlen(token)] = '\n';
-
-	    //Scrittura
-            trascritto = write(fd[n-1], token, strlen(token));
-
-	    //Check esito scrittura
-            if(trascritto<0){
-                printf("Scrittura nel file %s non riuscita\n", argv[n]);
+	        else{
+                printf("Numero inserito non corretto oppure il carattere precedente i due punti non rappresenta un numero\n");
             }
-        }
-	else{
-            printf("Numero inserito non corretto oppure il carattere precedente i due punti non rappresenta un numero\n");
-        }
-	}
+	    }
 	//Chiedo input
         printf("Inserisci la nuova riga, (EOF per terminare):\n");
     }
@@ -93,6 +93,6 @@ int main(int argc, char* argv[]) {
             close(fd[n]);
         }
     }
-
+    
     return EXIT_SUCCESS;
 }
