@@ -95,6 +95,9 @@ int main(int argc, char *argv[]) {
     
     // Padre 
     
+    // Rilascio pid dalla memoria
+    free(pid);
+    
     // P0 attende la terminazione dei figli
     for(i=0; i<numFigli; i++){
         waitChild();
